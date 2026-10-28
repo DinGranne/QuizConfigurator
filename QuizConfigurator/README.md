@@ -40,3 +40,27 @@ Filnamnet och namnet inne i koden är olika saker. XAML-filen och C#-filen måst
 
 Testresultat:
 Jag startade programmet och det tomma huvudfönstret öppnades.
+
+Skapat modellen Question
+
+Vad jag gjorde:
+Jag skapade mappen Models och klassen Question. Klassen innehåller Query för frågetexten, CorrectAnswer för rätt svar och IncorrectAnswers med tre platser för felaktiga svar.
+
+Varför:
+Programmet behöver en gemensam beskrivning av vad en fråga innehåller. Klassen hör till Model i MVVM och innehåller information, inte gränssnitt.
+
+Test:
+Programmet gick att bygga och starta efter ändringen. Jag har ännu inte testat att skapa och visa frågor.
+
+Skapat Difficulty och QuestionPack
+
+Vad jag gjorde:
+Jag skapade enumen Difficulty med alternativen Easy, Medium och Hard.
+
+Jag skapade också klassen QuestionPack med namn, svårighetsgrad, tidsgräns och en lista med frågor. Tidsgränsen börjar på 30 sekunder och frågelistan börjar tom.
+
+Varför:
+Difficulty ger oss bestämda val för svårighetsgraden. QuestionPack samlar frågorna och deras gemensamma inställningar på ett ställe. Konstruktorn tar emot namn och svårighetsgrad när ett nytt paket skapas.
+
+Test:
+Programmet gick att bygga och starta efter ändringarna. Jag har ännu inte testat modellerna med exempeldata.
