@@ -64,3 +64,21 @@ Difficulty ger oss bestämda val för svårighetsgraden. QuestionPack samlar fr�
 
 Test:
 Programmet gick att bygga och starta efter ändringarna. Jag har ännu inte testat modellerna med exempeldata.
+
+ViewModel-grunden och QuestionPackViewModel
+
+Vad jag gjorde:
+Jag skapade ViewModelBase med INotifyPropertyChanged, RaisePropertyChanged och SetProperty.
+
+Jag skapade också QuestionPackViewModel, som ärver från ViewModelBase och arbetar med ett QuestionPack. Den gör paketets namn, svårighetsgrad, tidsgräns och frågor tillgängliga för databindning.
+
+Varför:
+Gränssnittet behöver få veta när information ändras. ViewModelBase innehåller gemensam kod för sådana meddelanden, så att flera ViewModels kan återanvända den.
+
+QuestionPackViewModel läser och ändrar värden i modellen. Frågorna visas genom en ObservableCollection, som kan meddela gränssnittet när frågor läggs till eller tas bort.
+
+Att tänka på senare:
+ViewModel-listan och modellens frågelista är separata samlingar. När vi bygger sparningen behöver vi se till att tillagda och borttagna frågor följer med.
+
+Test:
+Programmet gick att bygga och starta. Jag har ännu inte kopplat ViewModel till gränssnittet och därför inte testat databindning eller uppdateringar på skärmen.
