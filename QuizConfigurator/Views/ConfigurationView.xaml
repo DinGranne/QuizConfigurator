@@ -10,30 +10,68 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" /> 
         </Grid.RowDefinitions>
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+
         <TextBlock Grid.Row="0"
+               Grid.ColumnSpan="2"
                Text="{Binding ActivePack.Name}"
                FontSize="28"
                Margin="0,0,0,15" />
 
         <ListBox Grid.Row="1"
-         ItemsSource="{Binding ActivePack.Questions}"
-         SelectedItem="{Binding SelectedQuestion, Mode=TwoWay}">
+             Grid.Column="0"
+             Margin="0,0,20,0"
+             ItemsSource="{Binding ActivePack.Questions}"
+             SelectedItem="{Binding SelectedQuestion, Mode=TwoWay}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Query}"
-                           FontSize="18"
                            Margin="5"
                            TextWrapping="Wrap" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TextBlock Grid.Row="2"
-           Text="{Binding SelectedQuestion.Query}"
-           FontSize="20"
-           Margin="0,15,0,0"
-           TextWrapping="Wrap" />
+
+        <ScrollViewer Grid.Row="1"
+                  Grid.Column="1"
+                  VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock Text="Frågetext" />
+                <TextBox Text="{Binding SelectedQuestion.Query,
+                                   Mode=TwoWay,
+                                   UpdateSourceTrigger=PropertyChanged}"
+                     TextWrapping="Wrap"
+                     Margin="0,5,0,15" />
+
+                <TextBlock Text="Rätt svar" />
+                <TextBox Text="{Binding SelectedQuestion.CorrectAnswer,
+                                   Mode=TwoWay,
+                                   UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,5,0,15" />
+
+                <TextBlock Text="Felaktigt svar 1" />
+                <TextBox Text="{Binding SelectedQuestion.IncorrectAnswers[0],
+                                   Mode=TwoWay,
+                                   UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,5,0,15" />
+
+                <TextBlock Text="Felaktigt svar 2" />
+                <TextBox Text="{Binding SelectedQuestion.IncorrectAnswers[1],
+                                   Mode=TwoWay,
+                                   UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,5,0,15" />
+
+                <TextBlock Text="Felaktigt svar 3" />
+                <TextBox Text="{Binding SelectedQuestion.IncorrectAnswers[2],
+                                   Mode=TwoWay,
+                                   UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,5,0,15" />
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

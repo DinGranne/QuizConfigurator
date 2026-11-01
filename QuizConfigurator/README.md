@@ -114,3 +114,21 @@ Båda exempelfrågorna visas i listan. När jag klickar på en fråga visas dess
 
 Nästa steg:
 Visa och redigera den valda frågans text och svarsalternativ.
+
+Redigera frågor och uppdatera frågelistan
+
+Vad jag gjorde:
+Jag delade ConfigurationView i två kolumner: en frågelista till vänster och redigeringsfält till höger.
+
+Textrutorna binds till den valda frågans text, rätta svar och tre felaktiga svar. TwoWay låter användaren ändra värdena, och UpdateSourceTrigger=PropertyChanged gör att ändringarna skickas tillbaka direkt när användaren skriver.
+
+Problem och lösning:
+När frågetexten ändrades uppdaterades inte texten i frågelistan direkt. ObservableCollection meddelar när frågor läggs till eller tas bort, men inte när en egenskap i en fråga ändras.
+
+Jag lade därför till INotifyPropertyChanged i Question och lät Query skicka ett ändringsmeddelande. Då kunde även frågelistan uppdateras.
+
+Test och resultat:
+Jag valde olika frågor och kontrollerade att deras text och svar visades. Ett ändrat svar fanns kvar när jag bytte fråga och sedan gick tillbaka. När jag ändrade frågetexten uppdaterades vänsterlistan direkt.
+
+Begränsning:
+Ändringarna sparas ännu inte till fil och försvinner när programmet stängs.
