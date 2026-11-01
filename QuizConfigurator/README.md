@@ -82,3 +82,20 @@ ViewModel-listan och modellens frågelista är separata samlingar. När vi bygge
 
 Test:
 Programmet gick att bygga och starta. Jag har ännu inte kopplat ViewModel till gränssnittet och därför inte testat databindning eller uppdateringar på skärmen.
+
+1 november 2026 – Testat databindning
+
+Vad jag gjorde:
+Jag skapade MainWindowViewModel med ett aktivt frågepaket och två exempelfrågor. Jag kopplade huvudfönstrets DataContext till denna ViewModel.
+
+I MainWindow lade jag till en rubrik och en textruta som båda binds till ActivePack.Name. Textrutan använder TwoWay och UpdateSourceTrigger=PropertyChanged.
+
+Varför:
+Jag ville kontrollera att gränssnittet kan läsa information från en ViewModel och skicka tillbaka ändringar till modellen.
+
+Test och resultat:
+Paketets namn visades när programmet startade. När jag ändrade namnet i textrutan uppdaterades rubriken direkt. Det visar att databindningen och meddelandet om namnändringen fungerar.
+
+Begränsning:
+Ändringarna finns bara i minnet medan programmet körs. Sparning till fil är inte byggd ännu. Gränssnittet i MainWindow är en tillfällig övning.
+

@@ -6,7 +6,16 @@
         xmlns:local="clr-namespace:QuizConfigurator"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="{Binding ActivePack.Name}"
+                   FontSize="28"
+                   Margin="0,0,0,15" />
 
+            <TextBox Text="{Binding ActivePack.Name,
+                               Mode=TwoWay,
+                               UpdateSourceTrigger=PropertyChanged}"
+                 FontSize="20" />
+        </StackPanel>
     </Grid>
 </Window>
