@@ -18,6 +18,8 @@ namespace QuizConfigurator.ViewModels
             set => SetProperty(ref _activePack, value);
         }
 
+        public ConfigurationViewModel ConfigurationViewModel { get; }
+
         public MainWindowViewModel()
         {
             var questionPack = new QuestionPack(
@@ -50,6 +52,8 @@ namespace QuizConfigurator.ViewModels
 
             _activePack = new QuestionPackViewModel(questionPack);
             Packs.Add(_activePack);
+
+            ConfigurationViewModel = new ConfigurationViewModel(this);
         }
     }
 }

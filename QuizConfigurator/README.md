@@ -99,3 +99,18 @@ Paketets namn visades när programmet startade. När jag ändrade namnet i textr
 Begränsning:
 Ändringarna finns bara i minnet medan programmet körs. Sparning till fil är inte byggd ännu. Gränssnittet i MainWindow är en tillfällig övning.
 
+Visat frågor och kopplat vald fråga
+
+Vad jag gjorde:
+Jag skapade ConfigurationViewModel och kopplade den till ConfigurationView. Vyn visas nu inuti MainWindow.
+
+Jag lade till en ListBox som visar ActivePack.Questions. En DataTemplate visar varje frågas Query. Listans SelectedItem är kopplat till egenskapen SelectedQuestion.
+
+Varför:
+Redigeringsdelen behöver veta vilken fråga användaren vill arbeta med. SelectedQuestion håller reda på valet, och SetProperty meddelar gränssnittet när valet ändras.
+
+Test och resultat:
+Båda exempelfrågorna visas i listan. När jag klickar på en fråga visas dess text under listan. När jag väljer den andra frågan ändras texten till den frågans text.
+
+Nästa steg:
+Visa och redigera den valda frågans text och svarsalternativ.
