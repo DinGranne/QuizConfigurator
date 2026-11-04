@@ -7,7 +7,26 @@
         xmlns:local="clr-namespace:QuizConfigurator"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+
+    <Window.InputBindings>
+        <KeyBinding Key="N"
+                    Modifiers="Control"
+                    Command="{Binding ConfigurationViewModel.AddQuestionCommand}" />
+
+        <KeyBinding Key="D"
+                    Modifiers="Control"
+                    Command="{Binding ConfigurationViewModel.RemoveQuestionCommand}" />
+    </Window.InputBindings>
+
     <Grid>
-        <views:ConfigurationView />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <views:MenuView Grid.Row="0" />
+
+        <views:ConfigurationView Grid.Row="1" />
     </Grid>
+    
 </Window>

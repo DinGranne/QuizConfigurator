@@ -153,3 +153,19 @@ Borttagningsknappen är inaktiverad när ingen fråga är vald. När jag lägger
 
 Begränsning:
 Ändringarna sparas ännu inte till fil.
+
+4 november 2026 – Meny och kortkommandon
+
+Vad jag gjorde:
+Jag lade in MenuView högst upp i huvudfönstret. Menyn har alternativ för att lägga till och ta bort frågor.
+
+Menyvalen använder samma kommandon som knapparna. Jag lade också till KeyBindings i MainWindow: Ctrl+N för att lägga till en fråga och Ctrl+D för att ta bort den valda frågan.
+
+Varför:
+Samma handling ska kunna nås på flera sätt utan att vi skriver om logiken. Kommandona återanvänds av knappar, menyval och kortkommandon.
+
+InputGestureText visar kortkommandot i menyn. KeyBinding kopplar själva tangentkombinationen till kommandot.
+
+Test och resultat:
+Tillägg och borttagning fungerar via knappar, meny och kortkommandon. Ctrl+N fungerar även när markören står i en textruta. Ctrl+D tar bort den valda frågan och gör ingenting när ingen fråga är vald. Menyn går också att använda med Alt och bokstäver.
+
