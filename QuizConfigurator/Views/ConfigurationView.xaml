@@ -6,10 +6,12 @@
              xmlns:local="clr-namespace:QuizConfigurator.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+   
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -73,5 +75,21 @@
                      Margin="0,5,0,15" />
             </StackPanel>
         </ScrollViewer>
+
+        <StackPanel Grid.Row="2"
+            Grid.ColumnSpan="2"
+            Orientation="Horizontal"
+            Margin="0,15,0,0">
+
+            <Button Content="Lägg till fråga"
+            Command="{Binding AddQuestionCommand}"
+            Padding="10,5"
+            Margin="0,0,10,0" />
+
+            <Button Content="Ta bort fråga"
+            Command="{Binding RemoveQuestionCommand}"
+            Padding="10,5" />
+        </StackPanel>
+        
     </Grid>
 </UserControl>

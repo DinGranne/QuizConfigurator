@@ -1,4 +1,5 @@
-﻿using QuizConfigurator.Models;
+﻿using QuizConfigurator.Commands;
+using QuizConfigurator.Models;
 
 namespace QuizConfigurator.ViewModels
 {
@@ -12,6 +13,13 @@ namespace QuizConfigurator.ViewModels
             MainWindowViewModel mainWindowViewModel)
         {
             _mainWindowViewModel = mainWindowViewModel;
+
+            AddQuestionCommand = new RelayCommand(
+                _ => AddQuestion());
+
+            RemoveQuestionCommand = new RelayCommand(
+                _ => RemoveQuestion(),
+                _ => SelectedQuestion is not null);
         }
 
         public QuestionPackViewModel ActivePack
@@ -22,7 +30,45 @@ namespace QuizConfigurator.ViewModels
         public Question? SelectedQuestion
         {
             get => _selectedQuestion;
-            set => SetProperty(ref _selectedQuestion, value);
+
+            set
+            {
+                if (SetProperty(ref _selectedQuestion, value))
+                {
+                    RemoveQuestionCommand.RaiseCanExecuteChanged();
+                }
+            }
+        }
+
+        public RelayCommand AddQuestionCommand { get; }
+
+        public RelayCommand RemoveQuestionCommand { get; }
+
+        private void AddQuestion()
+        {
+            var question = new Question
+            {
+                Query = "Ny fråga",
+                CorrectAnswer = "",
+                IncorrectAnswers = new[] { "", "", "" }
+            };
+
+            ActivePack.Questions.Add(question);
+            SelectedQuestion = question;
+        }
+
+        private void RemoveQuestion()
+        {
+            if (SelectedQuestion is null)
+            {
+                return;
+            }
+
+            var questionToRemove = SelectedQuestion;
+
+            SelectedQuestion = null;
+
+            ActivePack.Questions.Remove(questionToRemove);
         }
     }
 }

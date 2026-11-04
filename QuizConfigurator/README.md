@@ -132,3 +132,24 @@ Jag valde olika frågor och kontrollerade att deras text och svar visades. Ett �
 
 Begränsning:
 Ändringarna sparas ännu inte till fil och försvinner när programmet stängs.
+
+4 november 2026 – Lägga till och ta bort frågor med Commands
+
+Vad jag gjorde:
+Jag skapade RelayCommand, som implementerar ICommand. I ConfigurationViewModel lade jag till AddQuestionCommand och RemoveQuestionCommand och kopplade dem till knappar i XAML.
+
+En ny fråga läggs till i det aktiva paketets frågelista och väljs automatiskt. Borttagningskommandot tar bort den valda frågan.
+
+Varför:
+Commands låter knapparna anropa handlingar i ViewModel utan Click-eventhanterare i code-behind.
+
+CanExecute tillåter borttagning bara när en fråga är vald. När valet ändras anropas RaiseCanExecuteChanged, så att WPF kontrollerar knappens tillstånd igen.
+
+Problem och lösning:
+Under arbetet saknades kommandokoden i ConfigurationViewModel. Jag återställde koden och kontrollerade sedan både bygget och knapparnas funktion.
+
+Test och resultat:
+Borttagningsknappen är inaktiverad när ingen fråga är vald. När jag lägger till en fråga visas och markeras den, och borttagningsknappen aktiveras. När frågan tas bort försvinner den ur listan och knappen blir inaktiverad igen.
+
+Begränsning:
+Ändringarna sparas ännu inte till fil.
