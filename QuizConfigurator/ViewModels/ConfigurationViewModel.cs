@@ -1,4 +1,6 @@
-﻿using QuizConfigurator.Commands;
+﻿using System;
+
+using QuizConfigurator.Commands;
 using QuizConfigurator.Models;
 
 namespace QuizConfigurator.ViewModels
@@ -20,6 +22,9 @@ namespace QuizConfigurator.ViewModels
             RemoveQuestionCommand = new RelayCommand(
                 _ => RemoveQuestion(),
                 _ => SelectedQuestion is not null);
+
+            OpenPackOptionsCommand = new RelayCommand(
+    _ => OpenPackOptions());
         }
 
         public QuestionPackViewModel ActivePack
@@ -43,6 +48,10 @@ namespace QuizConfigurator.ViewModels
         public RelayCommand AddQuestionCommand { get; }
 
         public RelayCommand RemoveQuestionCommand { get; }
+
+        public RelayCommand OpenPackOptionsCommand { get; }
+
+        public event Action<PackOptionsViewModel>? PackOptionsRequested;
 
         private void AddQuestion()
         {
@@ -69,6 +78,13 @@ namespace QuizConfigurator.ViewModels
             SelectedQuestion = null;
 
             ActivePack.Questions.Remove(questionToRemove);
+        }
+
+        private void OpenPackOptions()
+        {
+            var options = new PackOptionsViewModel(ActivePack);
+
+            PackOptionsRequested?.Invoke(options);
         }
     }
 }

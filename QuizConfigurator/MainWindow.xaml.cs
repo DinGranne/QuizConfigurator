@@ -1,26 +1,35 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using QuizConfigurator.Dialogs;
 using QuizConfigurator.ViewModels;
 
 namespace QuizConfigurator
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel();
+
+            var viewModel = new MainWindowViewModel();
+
+            viewModel.ConfigurationViewModel.PackOptionsRequested
+                += OpenPackOptionsDialog;
+
+            DataContext = viewModel;
+        }
+
+        private void OpenPackOptionsDialog(
+            PackOptionsViewModel options)
+        {
+            var dialog = new PackOptionsDialog(options)
+            {
+                Owner = this
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                options.ApplyChanges();
+            }
         }
     }
 }

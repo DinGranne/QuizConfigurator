@@ -16,6 +16,10 @@
                 <MenuItem Header="_Remove Question"
                       InputGestureText="Ctrl+D"
                       Command="{Binding ConfigurationViewModel.RemoveQuestionCommand}" />
+                <Separator />
+
+                <MenuItem Header="Pack _Options"
+          Command="{Binding ConfigurationViewModel.OpenPackOptionsCommand}" />
             </MenuItem>
         </Menu>
     </Grid>

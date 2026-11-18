@@ -169,3 +169,28 @@ InputGestureText visar kortkommandot i menyn. KeyBinding kopplar själva tangent
 Test och resultat:
 Tillägg och borttagning fungerar via knappar, meny och kortkommandon. Ctrl+N fungerar även när markören står i en textruta. Ctrl+D tar bort den valda frågan och gör ingenting när ingen fråga är vald. Menyn går också att använda med Alt och bokstäver.
 
+18 november 2026 – Paketinställningar
+
+Vad jag gjorde:
+Jag byggde PackOptionsDialog med fält för paketnamn, svårighetsgrad och tid per fråga. Dialogen öppnas via Edit → Pack Options.
+
+PackOptionsViewModel håller en tillfällig kopia av inställningarna. Spara för över värdena till paketet. Avbryt, Esc och stängningskrysset lämnar paketet oförändrat.
+
+Varför:
+En tillfällig kopia gör att användaren kan redigera utan att ändra det riktiga paketet förrän ändringarna godkänns.
+
+Spara använder ett RelayCommand med CanExecute. Namnet får inte vara tomt eller bara innehålla mellanslag. Tiden kontrolleras med int.TryParse och måste vara ett heltal större än noll.
+
+Hur delarna samarbetar:
+ConfigurationViewModel skickar ett meddelande när dialogen ska öppnas. MainWindow visar fönstret med ShowDialog. Vid sparande returnerar dialogen true, och ApplyChanges för över inställningarna till paketet.
+
+Problem och lösningar:
+Ett saknat > i XAML rättades med hjälp av felmeddelandet. En bindning för tiden hade också hamnat i namnfältet och flyttades till rätt textruta.
+
+Vid senare kodändringar uppstod byggfel. Jag ersatte innehållet i de berörda C#-filerna med den sammanhängande koden och byggde projektet igen.
+
+Test och resultat:
+Bygget lyckades. Jag testade att spara namn, svårighetsgrad och tid och att värdena fanns kvar när dialogen öppnades igen. Jag kontrollerade också att Avbryt inte förde över ändringarna och att ogiltiga värden inaktiverade Spara.
+
+Kvar att göra:
+Inställningarna sparas ännu inte till JSON. Paketinställningarna behöver också kunna öppnas via en knapp och ett direkt kortkommando.

@@ -1,25 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using QuizConfigurator.ViewModels;
 
 namespace QuizConfigurator.Dialogs
 {
-    /// <summary>
-    /// Interaction logic for Window2.xaml
-    /// </summary>
-    public partial class Window2 : Window
+    public partial class PackOptionsDialog : Window
     {
-        public Window2()
+        public PackOptionsDialog()
         {
             InitializeComponent();
+        }
+
+        public PackOptionsDialog(PackOptionsViewModel viewModel)
+            : this()
+        {
+            DataContext = viewModel;
+
+            viewModel.SaveRequested += OnSaveRequested;
+
+            Closed += (_, _) =>
+                viewModel.SaveRequested -= OnSaveRequested;
+        }
+
+        private void OnSaveRequested()
+        {
+            DialogResult = true;
         }
     }
 }
