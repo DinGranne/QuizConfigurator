@@ -228,3 +228,17 @@ Paketinställningarna visade Djurquiz, Easy och 30 sekunder. När jag öppnade s
 Kvar att göra:
 En väljare behövs för att byta mellan befintliga paket. Paketen sparas ännu inte till fil.
 
+Välja mellan frågepaket
+
+Vad jag gjorde:
+Jag lade till en ComboBox i huvudfönstret. ItemsSource binds till Packs och SelectedItem binds till ActivePack. DisplayMemberPath visar paketens namn.
+
+Varför:
+Användaren behöver kunna välja vilket paket som ska redigeras. När ActivePack ändras uppdateras redigeringsdelen genom den notifiering vi tidigare byggt.
+
+Test och resultat:
+Jag skapade Djurquiz och lade till en egen fråga. Jag växlade mellan Mina frågor och Djurquiz och kontrollerade att rätt frågor visades i respektive paket. Den nya frågan fanns kvar när jag återvände till Djurquiz.
+
+Begränsning:
+Paketen finns ännu bara i minnet och försvinner när programmet stängs.
+
