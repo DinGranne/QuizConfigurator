@@ -194,3 +194,17 @@ Bygget lyckades. Jag testade att spara namn, svårighetsgrad och tid och att vä
 
 Kvar att göra:
 Inställningarna sparas ännu inte till JSON. Paketinställningarna behöver också kunna öppnas via en knapp och ett direkt kortkommando.
+
+18 november 2026 – Öppna paketinställningar på flera sätt
+
+Vad jag gjorde:
+Jag kopplade knappen Paketinställningar och kortkommandot Ctrl+O till samma OpenPackOptionsCommand som menyvalet använder.
+
+Menyn visar kortkommandot med InputGestureText. Själva tangentkombinationen kopplas till kommandot genom en KeyBinding i MainWindow.
+
+Problem och lösning:
+KeyBinding för Ctrl+O hamnade först utanför Window.InputBindings, vilket gav XAML-fel. Jag flyttade in den tillsammans med de andra tangentbordsbindningarna. Därefter lyckades bygget.
+
+Test och resultat:
+Paketinställningarna öppnas via knappen, Edit → Pack Options, Ctrl+O och tangentbordsnavigeringen Alt+E följt av O.
+
