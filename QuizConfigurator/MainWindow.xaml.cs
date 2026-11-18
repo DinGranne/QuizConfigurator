@@ -15,6 +15,9 @@ namespace QuizConfigurator
             viewModel.ConfigurationViewModel.PackOptionsRequested
                 += OpenPackOptionsDialog;
 
+            viewModel.CreateNewPackRequested
+                += OpenCreateNewPackDialog;
+
             DataContext = viewModel;
         }
 
@@ -30,6 +33,17 @@ namespace QuizConfigurator
             {
                 options.ApplyChanges();
             }
+        }
+
+        private void OpenCreateNewPackDialog(
+            CreateNewPackViewModel options)
+        {
+            var dialog = new CreateNewPackDialog(options)
+            {
+                Owner = this
+            };
+
+            dialog.ShowDialog();
         }
     }
 }

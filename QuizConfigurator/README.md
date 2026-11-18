@@ -208,3 +208,23 @@ KeyBinding för Ctrl+O hamnade först utanför Window.InputBindings, vilket gav 
 Test och resultat:
 Paketinställningarna öppnas via knappen, Edit → Pack Options, Ctrl+O och tangentbordsnavigeringen Alt+E följt av O.
 
+18 november 2026 – Skapa nya frågepaket
+
+Vad jag gjorde:
+Jag byggde CreateNewPackDialog och CreateNewPackViewModel. Dialogen öppnas via File → New Question Pack.
+
+Skapa-knappen använder ett kommando som bara tillåter skapande när namnet inte är tomt eller enbart består av mellanslag.
+
+När användaren väljer Skapa läggs ett nytt paket till i Packs och blir ActivePack. Paketet börjar med en tom frågelista, svårighetsgraden Easy och tidsgränsen 30 sekunder.
+
+Varför:
+MainWindowViewModel håller reda på paketen och vilket som är aktivt. ConfigurationViewModel lyssnar efter ändringar av ActivePack, tömmer den valda frågan och meddelar gränssnittet att det ska visa det nya paketet.
+
+Test och resultat:
+Jag skapade Djurquiz och kontrollerade att rubriken ändrades och att frågelistan och redigeringsfälten blev tomma. Jag kunde lägga till en fråga i det nya paketet.
+
+Paketinställningarna visade Djurquiz, Easy och 30 sekunder. När jag öppnade skapandedialogen igen och valde Avbryt var Djurquiz fortfarande aktivt.
+
+Kvar att göra:
+En väljare behövs för att byta mellan befintliga paket. Paketen sparas ännu inte till fil.
+

@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using QuizConfigurator.Commands;
 using QuizConfigurator.Models;
 
 namespace QuizConfigurator.ViewModels
@@ -19,6 +21,10 @@ namespace QuizConfigurator.ViewModels
         }
 
         public ConfigurationViewModel ConfigurationViewModel { get; }
+
+        public RelayCommand CreateNewPackCommand { get; }
+
+        public event Action<CreateNewPackViewModel>? CreateNewPackRequested;
 
         public MainWindowViewModel()
         {
@@ -54,6 +60,33 @@ namespace QuizConfigurator.ViewModels
             Packs.Add(_activePack);
 
             ConfigurationViewModel = new ConfigurationViewModel(this);
+
+            CreateNewPackCommand = new RelayCommand(
+                _ => OpenCreateNewPack());
+        }
+
+        private void OpenCreateNewPack()
+        {
+            var dialogViewModel = new CreateNewPackViewModel();
+
+            dialogViewModel.CreateRequested += () =>
+            {
+                CreatePack(dialogViewModel.Name);
+            };
+
+            CreateNewPackRequested?.Invoke(dialogViewModel);
+        }
+
+        private void CreatePack(string name)
+        {
+            var model = new QuestionPack(
+                name.Trim(),
+                Difficulty.Easy);
+
+            var pack = new QuestionPackViewModel(model);
+
+            Packs.Add(pack);
+            ActivePack = pack;
         }
     }
 }

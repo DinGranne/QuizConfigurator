@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.ComponentModel;
 using QuizConfigurator.Commands;
 using QuizConfigurator.Models;
 
@@ -24,7 +24,10 @@ namespace QuizConfigurator.ViewModels
                 _ => SelectedQuestion is not null);
 
             OpenPackOptionsCommand = new RelayCommand(
-    _ => OpenPackOptions());
+                _ => OpenPackOptions());
+
+            _mainWindowViewModel.PropertyChanged
+                += OnMainWindowPropertyChanged;
         }
 
         public QuestionPackViewModel ActivePack
@@ -52,6 +55,17 @@ namespace QuizConfigurator.ViewModels
         public RelayCommand OpenPackOptionsCommand { get; }
 
         public event Action<PackOptionsViewModel>? PackOptionsRequested;
+
+        private void OnMainWindowPropertyChanged(
+            object? sender,
+            PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(MainWindowViewModel.ActivePack))
+            {
+                SelectedQuestion = null;
+                RaisePropertyChanged(nameof(ActivePack));
+            }
+        }
 
         private void AddQuestion()
         {
