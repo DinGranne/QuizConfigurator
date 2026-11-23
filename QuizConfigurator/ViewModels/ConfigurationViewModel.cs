@@ -17,20 +17,23 @@ namespace QuizConfigurator.ViewModels
             _mainWindowViewModel = mainWindowViewModel;
 
             AddQuestionCommand = new RelayCommand(
-                _ => AddQuestion());
+                _ => AddQuestion(),
+                _ => ActivePack is not null);
 
             RemoveQuestionCommand = new RelayCommand(
                 _ => RemoveQuestion(),
-                _ => SelectedQuestion is not null);
+                _ => ActivePack is not null
+                    && SelectedQuestion is not null);
 
             OpenPackOptionsCommand = new RelayCommand(
-                _ => OpenPackOptions());
+                _ => OpenPackOptions(),
+                _ => ActivePack is not null);
 
             _mainWindowViewModel.PropertyChanged
                 += OnMainWindowPropertyChanged;
         }
 
-        public QuestionPackViewModel ActivePack
+        public QuestionPackViewModel? ActivePack
         {
             get => _mainWindowViewModel.ActivePack;
         }
@@ -63,12 +66,24 @@ namespace QuizConfigurator.ViewModels
             if (e.PropertyName == nameof(MainWindowViewModel.ActivePack))
             {
                 SelectedQuestion = null;
+
                 RaisePropertyChanged(nameof(ActivePack));
+
+                AddQuestionCommand.RaiseCanExecuteChanged();
+                RemoveQuestionCommand.RaiseCanExecuteChanged();
+                OpenPackOptionsCommand.RaiseCanExecuteChanged();
             }
         }
 
         private void AddQuestion()
         {
+            var pack = ActivePack;
+
+            if (pack is null)
+            {
+                return;
+            }
+
             var question = new Question
             {
                 Query = "Ny fråga",
@@ -76,27 +91,34 @@ namespace QuizConfigurator.ViewModels
                 IncorrectAnswers = new[] { "", "", "" }
             };
 
-            ActivePack.Questions.Add(question);
+            pack.Questions.Add(question);
             SelectedQuestion = question;
         }
 
         private void RemoveQuestion()
         {
-            if (SelectedQuestion is null)
+            var pack = ActivePack;
+            var questionToRemove = SelectedQuestion;
+
+            if (pack is null || questionToRemove is null)
             {
                 return;
             }
 
-            var questionToRemove = SelectedQuestion;
-
             SelectedQuestion = null;
-
-            ActivePack.Questions.Remove(questionToRemove);
+            pack.Questions.Remove(questionToRemove);
         }
 
         private void OpenPackOptions()
         {
-            var options = new PackOptionsViewModel(ActivePack);
+            var pack = ActivePack;
+
+            if (pack is null)
+            {
+                return;
+            }
+
+            var options = new PackOptionsViewModel(pack);
 
             PackOptionsRequested?.Invoke(options);
         }

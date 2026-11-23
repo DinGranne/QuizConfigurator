@@ -7,27 +7,40 @@ namespace QuizConfigurator.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private QuestionPackViewModel _activePack;
+        private QuestionPackViewModel? _activePack;
 
         public ObservableCollection<QuestionPackViewModel> Packs
         {
             get;
         } = new();
 
-        public QuestionPackViewModel ActivePack
+        public QuestionPackViewModel? ActivePack
         {
             get => _activePack;
-            set => SetProperty(ref _activePack, value);
+
+            set
+            {
+                if (SetProperty(ref _activePack, value))
+                {
+                    RemovePackCommand.RaiseCanExecuteChanged();
+                }
+            }
         }
 
         public ConfigurationViewModel ConfigurationViewModel { get; }
 
         public RelayCommand CreateNewPackCommand { get; }
 
+        public RelayCommand RemovePackCommand { get; }
+
         public event Action<CreateNewPackViewModel>? CreateNewPackRequested;
 
         public MainWindowViewModel()
         {
+            RemovePackCommand = new RelayCommand(
+                _ => RemovePack(),
+                _ => ActivePack is not null);
+
             var questionPack = new QuestionPack(
                 "Mina frågor",
                 Difficulty.Easy);
@@ -87,6 +100,24 @@ namespace QuizConfigurator.ViewModels
 
             Packs.Add(pack);
             ActivePack = pack;
+        }
+
+        private void RemovePack()
+        {
+            var packToRemove = ActivePack;
+
+            if (packToRemove is null)
+            {
+                return;
+            }
+
+            ActivePack = null;
+            Packs.Remove(packToRemove);
+
+            if (Packs.Count > 0)
+            {
+                ActivePack = Packs[0];
+            }
         }
     }
 }

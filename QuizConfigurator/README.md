@@ -242,3 +242,22 @@ Jag skapade Djurquiz och lade till en egen fråga. Jag växlade mellan Mina frå
 Begränsning:
 Paketen finns ännu bara i minnet och försvinner när programmet stängs.
 
+23 november 2026 – Ta bort frågepaket
+
+Vad jag gjorde:
+Jag skapade RemovePackCommand och kopplade det till File → Delete Question Pack.
+
+När ett paket tas bort väljs det första kvarvarande paketet. Om inga paket finns kvar blir ActivePack null, vilket betyder att inget paket är valt.
+
+Varför:
+Appen behöver fungera även när det sista paketet tas bort. Frågekommandona och paketinställningarna kontrollerar därför att ett aktivt paket finns. Deras CanExecute-villkor uppdateras när ActivePack ändras.
+
+Test och resultat:
+Jag skapade och tog bort ett testpaket. Paketet försvann ur väljaren och ett kvarvarande paket blev aktivt.
+
+Jag tog sedan bort det sista paketet. Frågelistan och paketrubriken blev tomma, och handlingarna som kräver ett paket inaktiverades.
+
+Det gick fortfarande att skapa ett nytt paket. Efter det kunde jag åter lägga till frågor och öppna paketinställningarna.
+
+Begränsning:
+Borttagningen sker direkt, utan bekräftelseruta. Paketen sparas ännu inte till fil.

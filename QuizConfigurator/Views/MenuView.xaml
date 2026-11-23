@@ -7,6 +7,9 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_New Question Pack"
                           Command="{Binding CreateNewPackCommand}" />
+
+                <MenuItem Header="_Delete Question Pack"
+                          Command="{Binding RemovePackCommand}" />
             </MenuItem>
 
             <MenuItem Header="_Edit">
@@ -26,4 +29,4 @@
             </MenuItem>
         </Menu>
     </Grid>
-</UserControl>
+</UserControl> 
