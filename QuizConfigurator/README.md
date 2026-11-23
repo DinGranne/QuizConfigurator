@@ -300,3 +300,22 @@ Start utan sparfil, inläsning av en tom paketlista och hantering av en skadad J
 
 Att tänka på:
 Inläsningen sker automatiskt. Ändringar sparas fortfarande manuellt via File → Save eller Ctrl+S.
+
+23 november 2026 – Testat inläsning och felhantering
+
+Hur jag testade:
+Jag sparade mina paket och bytte namn på JSON-filen för att behålla den som säkerhetskopia.
+
+Resultat:
+
+Utan sparfil startade appen med en tom paketlista.
+
+Jag sparade den tomma listan och startade om. Appen läste in den utan fel.
+
+Jag ersatte testfilens innehåll med ogiltig JSON. Appen visade ett felmeddelande utan att krascha, och sparningen blockerades.
+
+Jag återställde säkerhetskopians ursprungliga filnamn. Mina paket kom tillbaka och sparningen fungerade igen.
+
+Vad jag lärde mig:
+Det är skillnad på en fil som saknas, en giltig fil med noll paket och en fil som inte går att läsa. Appen behöver hantera alla tre situationerna. Säkerhetskopian gjorde att jag kunde testa fel utan att förlora mina riktiga paket.
+
