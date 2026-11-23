@@ -279,3 +279,24 @@ Jag skapade paketet Sparningstest och sparade det. Jag öppnade JSON-filen och h
 
 Kvar att testa:
 Automatisk inläsning vid programstart är ännu inte inkopplad. Felhanteringen finns i koden men har ännu inte testats med ett framkallat filfel.
+
+23 november 2026 – Läsa in frågepaket vid start
+
+Vad jag gjorde:
+Jag kopplade huvudfönstrets Loaded-event till asynkron inläsning av JSON-filen. De sparade paketen läggs i Packs och det första paketet blir aktivt.
+
+De hårdkodade exempelfrågorna togs bort. Om ingen fil finns börjar appen med en tom paketlista.
+
+Varför:
+Användaren ska kunna fortsätta arbeta med sparade paket efter att programmet har stängts.
+
+Inläst information kontrolleras innan den används. Om inläsningen misslyckas visas ett felmeddelande och sparningen blockeras för att skydda den befintliga filen.
+
+Test och resultat:
+Jag startade appen och hittade mitt tidigare sparade paket och dess frågetext. Jag lade till en ny fråga, fyllde i text och svar, sparade och startade om appen. Även den nya frågan fanns kvar efter omstarten.
+
+Kvar att testa:
+Start utan sparfil, inläsning av en tom paketlista och hantering av en skadad JSON-fil behöver testas separat.
+
+Att tänka på:
+Inläsningen sker automatiskt. Ändringar sparas fortfarande manuellt via File → Save eller Ctrl+S.

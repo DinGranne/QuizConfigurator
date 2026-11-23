@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using QuizConfigurator.Commands;
@@ -13,7 +14,8 @@ namespace QuizConfigurator.ViewModels
         private readonly QuizStorageService _storage = new();
 
         private QuestionPackViewModel? _activePack;
-        private bool _isSaving;
+        private bool _isBusy = true;
+        private bool _loadFailed;
         private string _statusMessage = "";
 
         public ObservableCollection<QuestionPackViewModel> Packs
@@ -54,47 +56,91 @@ namespace QuizConfigurator.ViewModels
         {
             RemovePackCommand = new RelayCommand(
                 _ => RemovePack(),
-                _ => ActivePack is not null);
+                _ => !_isBusy && ActivePack is not null);
+
+            CreateNewPackCommand = new RelayCommand(
+                _ => OpenCreateNewPack(),
+                _ => !_isBusy);
 
             SaveCommand = new RelayCommand(
                 async _ => await SaveAsync(),
-                _ => !_isSaving);
-
-            var questionPack = new QuestionPack(
-                "Mina frågor",
-                Difficulty.Easy);
-
-            questionPack.Questions.Add(new Question
-            {
-                Query = "Vad heter Sveriges huvudstad?",
-                CorrectAnswer = "Stockholm",
-                IncorrectAnswers = new[]
-                {
-                    "Göteborg",
-                    "Malmö",
-                    "Uppsala"
-                }
-            });
-
-            questionPack.Questions.Add(new Question
-            {
-                Query = "Hur många ben har en spindel?",
-                CorrectAnswer = "Åtta",
-                IncorrectAnswers = new[]
-                {
-                    "Fyra",
-                    "Sex",
-                    "Tio"
-                }
-            });
-
-            _activePack = new QuestionPackViewModel(questionPack);
-            Packs.Add(_activePack);
+                _ => !_isBusy && !_loadFailed);
 
             ConfigurationViewModel = new ConfigurationViewModel(this);
+        }
 
-            CreateNewPackCommand = new RelayCommand(
-                _ => OpenCreateNewPack());
+        public async Task LoadAsync()
+        {
+            SetBusy(true);
+            _loadFailed = false;
+            StatusMessage = "Läser in frågepaketen...";
+
+            try
+            {
+                var models = await _storage.LoadAsync();
+
+                foreach (var model in models)
+                {
+                    ValidatePack(model);
+                }
+
+                var loadedPacks = models
+                    .Select(model => new QuestionPackViewModel(model))
+                    .ToList();
+
+                ActivePack = null;
+                Packs.Clear();
+
+                foreach (var pack in loadedPacks)
+                {
+                    Packs.Add(pack);
+                }
+
+                ActivePack = Packs.FirstOrDefault();
+
+                StatusMessage = Packs.Count == 0
+                    ? "Inga frågepaket finns. Skapa ett via File-menyn."
+                    : $"Läste in {Packs.Count} frågepaket.";
+            }
+            catch (Exception ex)
+            {
+                _loadFailed = true;
+
+                StatusMessage =
+                    $"Kunde inte läsa frågepaketen: {ex.Message} " +
+                    "Sparning är blockerad för att skydda filen.";
+            }
+            finally
+            {
+                SetBusy(false);
+            }
+        }
+
+        private static void ValidatePack(QuestionPack? pack)
+        {
+            if (pack is null
+                || string.IsNullOrWhiteSpace(pack.Name)
+                || !Enum.IsDefined(typeof(Difficulty), pack.Difficulty)
+                || pack.TimeLimitInSeconds <= 0
+                || pack.Questions is null)
+            {
+                throw new InvalidDataException(
+                    "Ett frågepaket har ogiltiga inställningar.");
+            }
+
+            foreach (var question in pack.Questions)
+            {
+                if (question is null
+                    || question.Query is null
+                    || question.CorrectAnswer is null
+                    || question.IncorrectAnswers is null
+                    || question.IncorrectAnswers.Length != 3
+                    || question.IncorrectAnswers.Any(answer => answer is null))
+                {
+                    throw new InvalidDataException(
+                        "En fråga saknar text eller giltiga svarsfält.");
+                }
+            }
         }
 
         private void OpenCreateNewPack()
@@ -132,23 +178,17 @@ namespace QuizConfigurator.ViewModels
 
             ActivePack = null;
             Packs.Remove(packToRemove);
-
-            if (Packs.Count > 0)
-            {
-                ActivePack = Packs[0];
-            }
+            ActivePack = Packs.FirstOrDefault();
         }
 
         private async Task SaveAsync()
         {
-            if (_isSaving)
+            if (_isBusy || _loadFailed)
             {
                 return;
             }
 
-            _isSaving = true;
-            SaveCommand.RaiseCanExecuteChanged();
-
+            SetBusy(true);
             StatusMessage = "Sparar frågepaketen...";
 
             try
@@ -168,9 +208,17 @@ namespace QuizConfigurator.ViewModels
             }
             finally
             {
-                _isSaving = false;
-                SaveCommand.RaiseCanExecuteChanged();
+                SetBusy(false);
             }
+        }
+
+        private void SetBusy(bool value)
+        {
+            _isBusy = value;
+
+            SaveCommand.RaiseCanExecuteChanged();
+            CreateNewPackCommand.RaiseCanExecuteChanged();
+            RemovePackCommand.RaiseCanExecuteChanged();
         }
     }
 }

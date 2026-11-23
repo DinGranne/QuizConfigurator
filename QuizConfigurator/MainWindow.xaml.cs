@@ -6,19 +6,32 @@ namespace QuizConfigurator
 {
     public partial class MainWindow : Window
     {
+        private readonly MainWindowViewModel _viewModel;
+
         public MainWindow()
         {
             InitializeComponent();
 
-            var viewModel = new MainWindowViewModel();
+            _viewModel = new MainWindowViewModel();
 
-            viewModel.ConfigurationViewModel.PackOptionsRequested
+            _viewModel.ConfigurationViewModel.PackOptionsRequested
                 += OpenPackOptionsDialog;
 
-            viewModel.CreateNewPackRequested
+            _viewModel.CreateNewPackRequested
                 += OpenCreateNewPackDialog;
 
-            DataContext = viewModel;
+            DataContext = _viewModel;
+
+            Loaded += OnWindowLoaded;
+        }
+
+        private async void OnWindowLoaded(
+            object sender,
+            RoutedEventArgs e)
+        {
+            Loaded -= OnWindowLoaded;
+
+            await _viewModel.LoadAsync();
         }
 
         private void OpenPackOptionsDialog(
