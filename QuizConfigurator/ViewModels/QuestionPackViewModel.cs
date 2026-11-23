@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using QuizConfigurator.Models;
 
 namespace QuizConfigurator.ViewModels
@@ -64,5 +65,14 @@ namespace QuizConfigurator.ViewModels
         }
 
         public ObservableCollection<Question> Questions { get; }
+
+        public QuestionPack ToModel()
+        {
+            return new QuestionPack(Name, Difficulty)
+            {
+                TimeLimitInSeconds = TimeLimitInSeconds,
+                Questions = Questions.ToList()
+            };
+        }
     }
 }

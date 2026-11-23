@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 using QuizConfigurator.Commands;
 using QuizConfigurator.Models;
+using QuizConfigurator.Services;
 
 namespace QuizConfigurator.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        private readonly QuizStorageService _storage = new();
+
         private QuestionPackViewModel? _activePack;
+        private bool _isSaving;
+        private string _statusMessage = "";
 
         public ObservableCollection<QuestionPackViewModel> Packs
         {
@@ -27,11 +34,19 @@ namespace QuizConfigurator.ViewModels
             }
         }
 
+        public string StatusMessage
+        {
+            get => _statusMessage;
+            private set => SetProperty(ref _statusMessage, value);
+        }
+
         public ConfigurationViewModel ConfigurationViewModel { get; }
 
         public RelayCommand CreateNewPackCommand { get; }
 
         public RelayCommand RemovePackCommand { get; }
+
+        public RelayCommand SaveCommand { get; }
 
         public event Action<CreateNewPackViewModel>? CreateNewPackRequested;
 
@@ -40,6 +55,10 @@ namespace QuizConfigurator.ViewModels
             RemovePackCommand = new RelayCommand(
                 _ => RemovePack(),
                 _ => ActivePack is not null);
+
+            SaveCommand = new RelayCommand(
+                async _ => await SaveAsync(),
+                _ => !_isSaving);
 
             var questionPack = new QuestionPack(
                 "Mina frågor",
@@ -117,6 +136,40 @@ namespace QuizConfigurator.ViewModels
             if (Packs.Count > 0)
             {
                 ActivePack = Packs[0];
+            }
+        }
+
+        private async Task SaveAsync()
+        {
+            if (_isSaving)
+            {
+                return;
+            }
+
+            _isSaving = true;
+            SaveCommand.RaiseCanExecuteChanged();
+
+            StatusMessage = "Sparar frågepaketen...";
+
+            try
+            {
+                var models = Packs
+                    .Select(pack => pack.ToModel())
+                    .ToList();
+
+                await _storage.SaveAsync(models);
+
+                StatusMessage = "Frågepaketen har sparats.";
+            }
+            catch (Exception ex)
+            {
+                StatusMessage =
+                    $"Det gick inte att spara frågepaketen: {ex.Message}";
+            }
+            finally
+            {
+                _isSaving = false;
+                SaveCommand.RaiseCanExecuteChanged();
             }
         }
     }

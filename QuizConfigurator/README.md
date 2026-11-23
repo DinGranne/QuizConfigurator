@@ -261,3 +261,21 @@ Det gick fortfarande att skapa ett nytt paket. Efter det kunde jag åter lägga 
 
 Begränsning:
 Borttagningen sker direkt, utan bekräftelseruta. Paketen sparas ännu inte till fil.
+
+23 november 2026 – Spara frågepaket i JSON
+
+Vad jag gjorde:
+Jag skapade QuizStorageService för filhantering. Alla paket sparas i question-packs.json i en mapp under användarens AppData\Local.
+
+QuestionPackViewModel har metoden ToModel, som samlar paketets aktuella inställningar och frågorna från ViewModelns lista. Därmed följer tillagda och borttagna frågor med i informationen som sparas.
+
+Sparningen körs via File → Save eller Ctrl+S. Filen skrivs asynkront till en tillfällig fil som sedan ersätter JSON-filen. Appen visar ett statusmeddelande och fångar fel vid sparningen.
+
+Varför:
+Frågor och paket behöver sparas utanför programmets minne för att kunna användas efter en omstart. Asynkron filskrivning låter gränssnittet fortsätta arbeta medan programmet väntar på skrivningen.
+
+Test och resultat:
+Jag skapade paketet Sparningstest och sparade det. Jag öppnade JSON-filen och hittade paketnamnet. Efter att jag ändrat frågetexten till TEST123, sparat och öppnat filen igen hittade jag även den uppdaterade frågetexten.
+
+Kvar att testa:
+Automatisk inläsning vid programstart är ännu inte inkopplad. Felhanteringen finns i koden men har ännu inte testats med ett framkallat filfel.

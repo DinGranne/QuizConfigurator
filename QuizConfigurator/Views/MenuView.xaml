@@ -10,6 +10,12 @@
 
                 <MenuItem Header="_Delete Question Pack"
                           Command="{Binding RemovePackCommand}" />
+
+                <Separator />
+
+                <MenuItem Header="_Save"
+                          InputGestureText="Ctrl+S"
+                          Command="{Binding SaveCommand}" />
             </MenuItem>
 
             <MenuItem Header="_Edit">
@@ -29,4 +35,4 @@
             </MenuItem>
         </Menu>
     </Grid>
-</UserControl> 
+</UserControl>

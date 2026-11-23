@@ -18,6 +18,10 @@
         <KeyBinding Key="O"
                     Modifiers="Control"
                     Command="{Binding ConfigurationViewModel.OpenPackOptionsCommand}" />
+
+        <KeyBinding Key="S"
+                    Modifiers="Control"
+                    Command="{Binding SaveCommand}" />
     </Window.InputBindings>
 
     <Grid>
@@ -25,6 +29,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <views:MenuView Grid.Row="0" />
@@ -43,5 +48,13 @@
         </StackPanel>
 
         <views:ConfigurationView Grid.Row="2" />
+
+        <Border Grid.Row="3"
+                Background="#EEEEEE"
+                Padding="10,6">
+
+            <TextBlock Text="{Binding StatusMessage}"
+                       TextWrapping="Wrap" />
+        </Border>
     </Grid>
 </Window>
