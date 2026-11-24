@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using QuizConfigurator.Commands;
@@ -138,6 +139,8 @@ namespace QuizConfigurator.ViewModels
                 })
                 .ToList();
 
+            Shuffle(_questions);
+
             _questionIndex = 0;
             Message = "";
 
@@ -152,23 +155,45 @@ namespace QuizConfigurator.ViewModels
 
             CurrentQuestion = _questions[_questionIndex];
 
-            Answers.Add(new QuizAnswer
+            var options = new List<QuizAnswer>
             {
-                Text = CurrentQuestion.CorrectAnswer,
-                IsCorrect = true
-            });
+                new QuizAnswer
+                {
+                    Text = CurrentQuestion.CorrectAnswer,
+                    IsCorrect = true
+                }
+            };
 
             foreach (var incorrectAnswer in CurrentQuestion.IncorrectAnswers)
             {
-                Answers.Add(new QuizAnswer
+                options.Add(new QuizAnswer
                 {
                     Text = incorrectAnswer,
                     IsCorrect = false
                 });
             }
 
+            Shuffle(options);
+
+            foreach (var option in options)
+            {
+                Answers.Add(option);
+            }
+
             _hasAnswered = false;
             UpdateGameState();
+        }
+
+        private static void Shuffle<T>(List<T> items)
+        {
+            for (int i = items.Count - 1; i > 0; i--)
+            {
+                int randomIndex = Random.Shared.Next(i + 1);
+
+                T temporary = items[i];
+                items[i] = items[randomIndex];
+                items[randomIndex] = temporary;
+            }
         }
 
         private void Answer(object? parameter)

@@ -390,3 +390,19 @@ Jag testade en hel runda och kontrollerade frågenumret, poängen och slutresult
 Kvar att göra:
 Frågornas och svarsalternativens ordning behöver slumpas. Nedräkning och hantering av frågor där tiden tar slut återstår också.
 
+24 november 2026 – Slumpa frågor och svarsalternativ
+
+Vad jag gjorde:
+Jag skapade metoden Shuffle och använder den för att blanda frågorna vid quizstart och svarsalternativen när en fråga visas.
+
+Varför:
+Quizet ska kunna presentera frågor och svar i olika ordning mellan rundorna. Varje svarsalternativ behåller sin IsCorrect-egenskap när det flyttas, så att rättningen inte beror på knappens position.
+
+Blandningen görs på rundans kopior och ändrar inte frågornas ordning i originalpaketet.
+
+Test och resultat:
+Jag testade flera rundor och såg att ordningen varierade. Frågorna visades en gång per runda, rätt svar gav poäng oavsett position och slutresultatet stämde.
+
+Att tänka på:
+Slumpning kan ibland ge samma ordning igen. Det betyder inte i sig att blandningen är fel.
+
