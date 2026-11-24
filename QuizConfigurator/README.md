@@ -353,3 +353,24 @@ Jag testade sedan ett tomt paket. Appen visade ett meddelande om att frågor beh
 Kvar att göra:
 Svarsknappar, återkoppling, poäng, nästa fråga, slutresultat, slumpning och timer återstår. Frågorna visas tills vidare i paketets ordning.
 
+24 november 2026 – Svara på en quizfråga
+
+Vad jag gjorde:
+Jag skapade QuizAnswer med svarstext och information om alternativet är rätt.
+
+PlayerView visar fyra svarsknappar. Varje knapp använder AnswerCommand och skickar sitt svarsalternativ genom CommandParameter.
+
+Varför:
+Genom att hålla ihop svarstexten med IsCorrect kan vi senare blanda alternativen utan att tappa bort vilket svar som är rätt.
+
+Efter ett svar markeras frågan som besvarad. Kommandots CanExecute-villkor inaktiverar då alla svarsknappar.
+
+Test och resultat:
+Fyra svarsalternativ visades. Fel svar gav återkoppling med det korrekta svaret. Rätt svar gav återkopplingen Rätt. Efter svaret inaktiverades knapparna, och en ny start gjorde det möjligt att svara igen.
+
+Kontroll före start:
+Koden kontrollerar att frågetext och alla svar är ifyllda innan rundan startas.
+
+Kvar att göra:
+Nästa fråga, poäng, slutresultat, slumpning och timer återstår. Rätt svar visas tills vidare först.
+

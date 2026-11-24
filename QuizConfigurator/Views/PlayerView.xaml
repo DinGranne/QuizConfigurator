@@ -27,7 +27,32 @@
 
             <TextBlock Text="{Binding CurrentQuestion.Query}"
                        FontSize="24"
-                       TextWrapping="Wrap" />
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,20" />
+
+            <ItemsControl ItemsSource="{Binding Answers}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Command="{Binding DataContext.AnswerCommand,
+                                    RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}"
+                                HorizontalContentAlignment="Left"
+                                Padding="12,8"
+                                Margin="0,0,0,8">
+
+                            <TextBlock Text="{Binding Text}"
+                                       FontSize="18"
+                                       TextWrapping="Wrap" />
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Text="{Binding Feedback}"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       TextWrapping="Wrap"
+                       Margin="0,15,0,0" />
 
         </StackPanel>
     </ScrollViewer>
