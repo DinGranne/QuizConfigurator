@@ -406,3 +406,18 @@ Jag testade flera rundor och såg att ordningen varierade. Frågorna visades en 
 Att tänka på:
 Slumpning kan ibland ge samma ordning igen. Det betyder inte i sig att blandningen är fel.
 
+24 november 2026 – Nedräkning per fråga
+
+Vad jag gjorde:
+Jag lade till DispatcherTimer för återkommande uppdateringar och Stopwatch för att mäta faktiskt förfluten tid. Rundans tidsgräns hämtas från frågepaketet när rundan startar.
+
+När tiden tar slut låses svarsalternativen, rätt svar visas och spelaren kan gå vidare utan att få poäng för frågan. Tiden kontrolleras också när ett svar skickas in.
+
+Timern stoppas efter ett svar och när rundan avslutas. Byte av paket eller återgång till redigeringsläget avbryter rundan.
+
+Varför:
+DispatcherTimer kan bli försenad och ska därför inte användas som en exakt klocka. Stopwatch mäter tiden, medan DispatcherTimer ser till att gränssnittet uppdateras.
+
+Testläge:
+Jag byggde och provade timerfunktionen. De situationer jag hittills testat fungerade. En samlad slutkontroll av hela appen återstår.
+

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Windows.Threading;
 using QuizConfigurator.Commands;
 using QuizConfigurator.Models;
 
@@ -10,13 +13,18 @@ namespace QuizConfigurator.ViewModels
     public class PlayerViewModel : ViewModelBase
     {
         private readonly MainWindowViewModel _mainWindowViewModel;
+        private readonly DispatcherTimer _timer;
+        private readonly Stopwatch _stopwatch = new();
 
         private List<Question> _questions = new();
         private int _questionIndex = -1;
         private int _score;
-        private Question? _currentQuestion;
+        private int _timeLimitInSeconds;
+        private int _secondsRemaining;
 
+        private Question? _currentQuestion;
         private bool _hasAnswered = true;
+
         private string _message = "Välj ett frågepaket och starta quizet.";
         private string _feedback = "";
 
@@ -36,6 +44,16 @@ namespace QuizConfigurator.ViewModels
             NextQuestionCommand = new RelayCommand(
                 _ => NextQuestion(),
                 _ => CurrentQuestion is not null && _hasAnswered);
+
+            _timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(100)
+            };
+
+            _timer.Tick += OnTimerTick;
+
+            _mainWindowViewModel.PropertyChanged
+                += OnMainWindowPropertyChanged;
         }
 
         public RelayCommand StartQuizCommand { get; }
@@ -50,6 +68,12 @@ namespace QuizConfigurator.ViewModels
         {
             get => _currentQuestion;
             private set => SetProperty(ref _currentQuestion, value);
+        }
+
+        public int SecondsRemaining
+        {
+            get => _secondsRemaining;
+            private set => SetProperty(ref _secondsRemaining, value);
         }
 
         public string ProgressText
@@ -92,16 +116,7 @@ namespace QuizConfigurator.ViewModels
 
         private void StartQuiz()
         {
-            _hasAnswered = true;
-            CurrentQuestion = null;
-            Answers.Clear();
-
-            _questionIndex = -1;
-            _score = 0;
-            _questions.Clear();
-
-            Feedback = "";
-            UpdateGameState();
+            ClearRound();
 
             var pack = _mainWindowViewModel.ActivePack;
 
@@ -130,6 +145,14 @@ namespace QuizConfigurator.ViewModels
                 return;
             }
 
+            if (pack.TimeLimitInSeconds <= 0)
+            {
+                Message = "Paketets tidsgräns måste vara större än noll.";
+                return;
+            }
+
+            _timeLimitInSeconds = pack.TimeLimitInSeconds;
+
             _questions = pack.Questions
                 .Select(question => new Question
                 {
@@ -149,6 +172,8 @@ namespace QuizConfigurator.ViewModels
 
         private void ShowCurrentQuestion()
         {
+            StopTimer();
+
             _hasAnswered = true;
             Answers.Clear();
             Feedback = "";
@@ -180,20 +205,50 @@ namespace QuizConfigurator.ViewModels
                 Answers.Add(option);
             }
 
+            SecondsRemaining = _timeLimitInSeconds;
             _hasAnswered = false;
+
+            _stopwatch.Restart();
+            _timer.Start();
+
             UpdateGameState();
         }
 
-        private static void Shuffle<T>(List<T> items)
+        private void OnTimerTick(object? sender, EventArgs e)
         {
-            for (int i = items.Count - 1; i > 0; i--)
+            if (_hasAnswered || CurrentQuestion is null)
             {
-                int randomIndex = Random.Shared.Next(i + 1);
-
-                T temporary = items[i];
-                items[i] = items[randomIndex];
-                items[randomIndex] = temporary;
+                StopTimer();
+                return;
             }
+
+            double remaining =
+                _timeLimitInSeconds - _stopwatch.Elapsed.TotalSeconds;
+
+            SecondsRemaining =
+                (int)Math.Ceiling(Math.Max(0, remaining));
+
+            if (remaining <= 0)
+            {
+                HandleTimeExpired();
+            }
+        }
+
+        private void HandleTimeExpired()
+        {
+            if (_hasAnswered || CurrentQuestion is null)
+            {
+                return;
+            }
+
+            _hasAnswered = true;
+            StopTimer();
+            SecondsRemaining = 0;
+
+            Feedback =
+                $"Tiden är slut! Det korrekta svaret är: {CurrentQuestion.CorrectAnswer}";
+
+            UpdateGameState();
         }
 
         private void Answer(object? parameter)
@@ -206,7 +261,18 @@ namespace QuizConfigurator.ViewModels
                 return;
             }
 
+            if (_stopwatch.Elapsed.TotalSeconds >= _timeLimitInSeconds)
+            {
+                HandleTimeExpired();
+                return;
+            }
+
             _hasAnswered = true;
+            StopTimer();
+
+            SecondsRemaining = (int)Math.Ceiling(Math.Max(
+                0,
+                _timeLimitInSeconds - _stopwatch.Elapsed.TotalSeconds));
 
             if (answer.IsCorrect)
             {
@@ -239,15 +305,73 @@ namespace QuizConfigurator.ViewModels
 
         private void FinishQuiz()
         {
-            Message = $"Quizet är klart! Du fick {_score} av {_questions.Count} rätt.";
+            StopTimer();
+
+            Message =
+                $"Quizet är klart! Du fick {_score} av {_questions.Count} rätt.";
 
             CurrentQuestion = null;
             Answers.Clear();
             Feedback = "";
+
             _questionIndex = -1;
             _hasAnswered = true;
+            SecondsRemaining = 0;
 
             UpdateGameState();
+        }
+
+        private void ClearRound()
+        {
+            StopTimer();
+
+            _hasAnswered = true;
+            CurrentQuestion = null;
+            Answers.Clear();
+            _questions.Clear();
+
+            _questionIndex = -1;
+            _score = 0;
+            SecondsRemaining = 0;
+            Feedback = "";
+
+            UpdateGameState();
+        }
+
+        private void StopTimer()
+        {
+            _timer.Stop();
+            _stopwatch.Stop();
+        }
+
+        private void OnMainWindowPropertyChanged(
+            object? sender,
+            PropertyChangedEventArgs e)
+        {
+            bool changedPack =
+                e.PropertyName == nameof(MainWindowViewModel.ActivePack);
+
+            bool leftPlayMode =
+                e.PropertyName == nameof(MainWindowViewModel.IsPlayMode)
+                && !_mainWindowViewModel.IsPlayMode;
+
+            if (changedPack || leftPlayMode)
+            {
+                ClearRound();
+                Message = "Välj ett frågepaket och starta quizet.";
+            }
+        }
+
+        private static void Shuffle<T>(List<T> items)
+        {
+            for (int i = items.Count - 1; i > 0; i--)
+            {
+                int randomIndex = Random.Shared.Next(i + 1);
+
+                T temporary = items[i];
+                items[i] = items[randomIndex];
+                items[randomIndex] = temporary;
+            }
         }
 
         private void UpdateGameState()
