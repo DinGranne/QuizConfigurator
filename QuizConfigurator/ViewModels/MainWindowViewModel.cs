@@ -51,6 +51,8 @@ namespace QuizConfigurator.ViewModels
 
         public ConfigurationViewModel ConfigurationViewModel { get; }
 
+        public PlayerViewModel PlayerViewModel { get; }
+
         public RelayCommand CreateNewPackCommand { get; }
 
         public RelayCommand RemovePackCommand { get; }
@@ -84,6 +86,8 @@ namespace QuizConfigurator.ViewModels
                 _ => IsPlayMode = true);
 
             ConfigurationViewModel = new ConfigurationViewModel(this);
+
+            PlayerViewModel = new PlayerViewModel(this);
         }
 
         public async Task LoadAsync()

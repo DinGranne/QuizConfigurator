@@ -335,3 +335,21 @@ Appen startar i redigeringsläget. View → Play visar spelsidans rubrik. View �
 Kvar att göra:
 PlayerView visar än så länge bara en introduktion. Frågevisning, svar, poäng, slumpning och timer återstår.
 
+24 november 2026 – Starta quiz och visa första frågan
+
+Vad jag gjorde:
+Jag skapade PlayerViewModel och kopplade den till PlayerView. Starta quiz-knappen använder StartQuizCommand.
+
+När rundan startar kopieras det aktiva paketets frågor och svar till en separat lista. Den första frågan visas tillsammans med exempelvis ”Fråga 1 av 2”.
+
+Varför:
+PlayerViewModel håller reda på rundans frågor och aktuell fråga. Kopiorna gör att senare redigering av paketet inte ändrar frågorna i den pågående rundan.
+
+Test och resultat:
+Jag startade ett quiz med ett paket som innehåller frågor. Första frågan och rätt antal frågor visades.
+
+Jag testade sedan ett tomt paket. Appen visade ett meddelande om att frågor behöver läggas till, och den tidigare frågan försvann.
+
+Kvar att göra:
+Svarsknappar, återkoppling, poäng, nästa fråga, slutresultat, slumpning och timer återstår. Frågorna visas tills vidare i paketets ordning.
+
