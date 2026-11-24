@@ -16,6 +16,7 @@ namespace QuizConfigurator.ViewModels
         private QuestionPackViewModel? _activePack;
         private bool _isBusy = true;
         private bool _loadFailed;
+        private bool _isPlayMode;
         private string _statusMessage = "";
 
         public ObservableCollection<QuestionPackViewModel> Packs
@@ -36,6 +37,12 @@ namespace QuizConfigurator.ViewModels
             }
         }
 
+        public bool IsPlayMode
+        {
+            get => _isPlayMode;
+            private set => SetProperty(ref _isPlayMode, value);
+        }
+
         public string StatusMessage
         {
             get => _statusMessage;
@@ -49,6 +56,10 @@ namespace QuizConfigurator.ViewModels
         public RelayCommand RemovePackCommand { get; }
 
         public RelayCommand SaveCommand { get; }
+
+        public RelayCommand ShowEditCommand { get; }
+
+        public RelayCommand ShowPlayCommand { get; }
 
         public event Action<CreateNewPackViewModel>? CreateNewPackRequested;
 
@@ -65,6 +76,12 @@ namespace QuizConfigurator.ViewModels
             SaveCommand = new RelayCommand(
                 async _ => await SaveAsync(),
                 _ => !_isBusy && !_loadFailed);
+
+            ShowEditCommand = new RelayCommand(
+                _ => IsPlayMode = false);
+
+            ShowPlayCommand = new RelayCommand(
+                _ => IsPlayMode = true);
 
             ConfigurationViewModel = new ConfigurationViewModel(this);
         }

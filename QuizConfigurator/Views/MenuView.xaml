@@ -33,6 +33,14 @@
                           InputGestureText="Ctrl+O"
                           Command="{Binding ConfigurationViewModel.OpenPackOptionsCommand}" />
             </MenuItem>
+
+            <MenuItem Header="_View">
+                <MenuItem Header="_Edit"
+                          Command="{Binding ShowEditCommand}" />
+
+                <MenuItem Header="_Play"
+                          Command="{Binding ShowPlayCommand}" />
+            </MenuItem>
         </Menu>
     </Grid>
 </UserControl>

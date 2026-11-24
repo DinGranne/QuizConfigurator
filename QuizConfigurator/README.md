@@ -319,3 +319,19 @@ Jag återställde säkerhetskopians ursprungliga filnamn. Mina paket kom tillbak
 Vad jag lärde mig:
 Det är skillnad på en fil som saknas, en giltig fil med noll paket och en fil som inte går att läsa. Appen behöver hantera alla tre situationerna. Säkerhetskopian gjorde att jag kunde testa fel utan att förlora mina riktiga paket.
 
+24 november 2026 – Växla mellan redigering och spel
+
+Vad jag gjorde:
+Jag förberedde PlayerView och lade till IsPlayMode i MainWindowViewModel. Menyvalen View → Edit och View → Play använder kommandon som ändrar detta värde.
+
+I MainWindow använder jag DataTriggers för att visa ConfigurationView eller PlayerView beroende på valt läge.
+
+Varför:
+Redigering och spel ska ha egna gränssnittsdelar. Genom att styra synligheten med databindning kan ViewModel hålla reda på läget utan att direkt ändra kontrollerna.
+
+Test och resultat:
+Appen startar i redigeringsläget. View → Play visar spelsidans rubrik. View → Edit visar redigeringsdelen igen. Det valda paketet och dess frågor finns kvar när jag växlar tillbaka.
+
+Kvar att göra:
+PlayerView visar än så länge bara en introduktion. Frågevisning, svar, poäng, slumpning och timer återstår.
+

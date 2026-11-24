@@ -47,7 +47,41 @@
                       HorizontalAlignment="Left" />
         </StackPanel>
 
-        <views:ConfigurationView Grid.Row="2" />
+        <Grid Grid.Row="2">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Visible" />
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlayMode}"
+                                     Value="True">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <views:ConfigurationView />
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlayMode}"
+                                     Value="True">
+                            <Setter Property="Visibility"
+                                    Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <views:PlayerView />
+        </Grid>
 
         <Border Grid.Row="3"
                 Background="#EEEEEE"
