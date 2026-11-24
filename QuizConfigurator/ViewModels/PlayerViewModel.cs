@@ -12,6 +12,7 @@ namespace QuizConfigurator.ViewModels
 
         private List<Question> _questions = new();
         private int _questionIndex = -1;
+        private int _score;
         private Question? _currentQuestion;
 
         private bool _hasAnswered = true;
@@ -30,11 +31,17 @@ namespace QuizConfigurator.ViewModels
                 parameter => !_hasAnswered
                     && parameter is QuizAnswer answer
                     && Answers.Contains(answer));
+
+            NextQuestionCommand = new RelayCommand(
+                _ => NextQuestion(),
+                _ => CurrentQuestion is not null && _hasAnswered);
         }
 
         public RelayCommand StartQuizCommand { get; }
 
         public RelayCommand AnswerCommand { get; }
+
+        public RelayCommand NextQuestionCommand { get; }
 
         public ObservableCollection<QuizAnswer> Answers { get; } = new();
 
@@ -57,6 +64,19 @@ namespace QuizConfigurator.ViewModels
             }
         }
 
+        public string ScoreText => $"Antal rätt: {_score}";
+
+        public string NextButtonText
+        {
+            get
+            {
+                return CurrentQuestion is not null
+                    && _questionIndex == _questions.Count - 1
+                    ? "Visa resultat"
+                    : "Nästa fråga";
+            }
+        }
+
         public string Message
         {
             get => _message;
@@ -72,15 +92,15 @@ namespace QuizConfigurator.ViewModels
         private void StartQuiz()
         {
             _hasAnswered = true;
-            Answers.Clear();
-            AnswerCommand.RaiseCanExecuteChanged();
-
             CurrentQuestion = null;
+            Answers.Clear();
+
             _questionIndex = -1;
+            _score = 0;
             _questions.Clear();
 
             Feedback = "";
-            RaisePropertyChanged(nameof(ProgressText));
+            UpdateGameState();
 
             var pack = _mainWindowViewModel.ActivePack;
 
@@ -148,9 +168,7 @@ namespace QuizConfigurator.ViewModels
             }
 
             _hasAnswered = false;
-
-            RaisePropertyChanged(nameof(ProgressText));
-            AnswerCommand.RaiseCanExecuteChanged();
+            UpdateGameState();
         }
 
         private void Answer(object? parameter)
@@ -165,11 +183,56 @@ namespace QuizConfigurator.ViewModels
 
             _hasAnswered = true;
 
+            if (answer.IsCorrect)
+            {
+                _score++;
+            }
+
             Feedback = answer.IsCorrect
                 ? $"Rätt! Det korrekta svaret är: {CurrentQuestion.CorrectAnswer}"
                 : $"Fel. Det korrekta svaret är: {CurrentQuestion.CorrectAnswer}";
 
+            UpdateGameState();
+        }
+
+        private void NextQuestion()
+        {
+            if (CurrentQuestion is null || !_hasAnswered)
+            {
+                return;
+            }
+
+            if (_questionIndex == _questions.Count - 1)
+            {
+                FinishQuiz();
+                return;
+            }
+
+            _questionIndex++;
+            ShowCurrentQuestion();
+        }
+
+        private void FinishQuiz()
+        {
+            Message = $"Quizet är klart! Du fick {_score} av {_questions.Count} rätt.";
+
+            CurrentQuestion = null;
+            Answers.Clear();
+            Feedback = "";
+            _questionIndex = -1;
+            _hasAnswered = true;
+
+            UpdateGameState();
+        }
+
+        private void UpdateGameState()
+        {
+            RaisePropertyChanged(nameof(ProgressText));
+            RaisePropertyChanged(nameof(ScoreText));
+            RaisePropertyChanged(nameof(NextButtonText));
+
             AnswerCommand.RaiseCanExecuteChanged();
+            NextQuestionCommand.RaiseCanExecuteChanged();
         }
     }
 }

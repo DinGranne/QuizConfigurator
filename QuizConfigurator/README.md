@@ -374,3 +374,19 @@ Koden kontrollerar att frågetext och alla svar är ifyllda innan rundan startas
 Kvar att göra:
 Nästa fråga, poäng, slutresultat, slumpning och timer återstår. Rätt svar visas tills vidare först.
 
+24 november 2026 – Nästa fråga och slutresultat
+
+Vad jag gjorde:
+Jag lade till NextQuestionCommand och poängräkning i PlayerViewModel.
+
+Nästa fråga kan väljas först efter att den aktuella frågan har besvarats. På sista frågan ändras knapptexten till Visa resultat. När rundan avslutas visas antal rätt av totalt antal frågor.
+
+Varför:
+Spelaren ska svara på alla frågor i paketet innan slutresultatet visas. CanExecute hindrar att en obesvarad fråga hoppas över, och spärren mot upprepade svar hindrar att samma fråga ger poäng flera gånger.
+
+Test och resultat:
+Jag testade en hel runda och kontrollerade frågenumret, poängen och slutresultatet. Nästa-knappen aktiverades efter svaret och tidigare återkoppling försvann när nästa fråga visades. När en ny runda startades nollställdes poängen.
+
+Kvar att göra:
+Frågornas och svarsalternativens ordning behöver slumpas. Nedräkning och hantering av frågor där tiden tar slut återstår också.
+
